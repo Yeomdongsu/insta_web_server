@@ -170,7 +170,7 @@ class PostingListResource(Resource) :
             connection = get_connection()
 
             query = '''
-                    select p.id as postId, p.imageUrl, p.content, u.id as userId, u.nickname, p.createdAt, count(fa.id) as favoriteCnt, if(fa2.id is null, 0, 1) as isFavorite
+                    select p.id as postId, p.imageUrl, p.content, u.id as userId, u.nickname, p.createdAt, count(distinct fa.id) as favoriteCnt, if(fa2.id is null, 0, 1) as isFavorite, count(distinct c.id) as commentCnt
                     from follow f
                     join posting p
                     on f.followeeId = p.userId
@@ -180,6 +180,8 @@ class PostingListResource(Resource) :
                     on p.id = fa.postingId
                     left join favorite fa2
                     on p.id = fa2.postingId and fa2.userId = %s  
+                    left join comment c
+                    on p.id = c.postingId
                     where f.followerId = %s
                     group by p.id
                     order by p.createdAt desc

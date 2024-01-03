@@ -98,6 +98,39 @@ class UserLoginResource(Resource) :
         access_token = create_access_token(result_list[0]["id"])
         
         return  {"result" : "success", "access_token" : access_token}, 200
+    
+    # 본인 외 모든 회원 나오게
+    @jwt_required()
+    def get(self) :
+        
+        user_id = get_jwt_identity()
+
+        try :
+            connection = get_connection()
+
+            query = '''
+                    select id, nickname
+                    from user
+                    where id != %s
+                    order by id asc;
+                    '''
+            record = (user_id, )
+            
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute(query, record)
+            
+            result_list = cursor.fetchall()
+
+            cursor.close()
+            connection.close()
+
+        except Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"error" : str(e)}, 500
+
+        return {"result" : "success", "userList" : result_list, "count" : len(result_list)}, 200
 
 # 로그아웃
 jwt_blocklist = set()
