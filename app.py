@@ -2,7 +2,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from config import Config
-from resources.comment import CommentResource
+from resources.comment import CommentDeleteResource, CommentResource
 from resources.favorite import FavoriteResource
 from resources.follow import FollowResource
 from resources.posting import PostingListResource, PostingResource
@@ -37,6 +37,7 @@ api.add_resource(PostingResource, "/posting/<int:postId>") # 글 상세정보
 api.add_resource(FollowResource, "/follow/<int:followee_id>") # 팔로우
 api.add_resource(FavoriteResource, "/favorite/<int:postingId>") # 좋아요
 api.add_resource(CommentResource, "/comment/<int:postId>") # 댓글 관련
+api.add_resource(CommentDeleteResource, "/comment/<int:commentId>")
 
 if __name__ == "__main__" :
     app.run()

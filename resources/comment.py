@@ -37,37 +37,6 @@ class CommentResource(Resource) :
             return {"error" : str(e)}, 500
 
         return {"result" : "success"}, 200
-    
-    # 댓글 삭제
-    @jwt_required()
-    def delete(self, postId) :
-
-        user_id = get_jwt_identity()
-        commentId = request.args.get("commentId")
-
-        try :
-            connection = get_connection()
-
-            query = '''
-                    delete from comment
-                    where id = %s and userId = %s and postingId = %s;
-                    '''
-            record = (commentId, user_id, postId)
-
-            cursor = connection.cursor()
-            cursor.execute(query, record)
-            connection.commit()
-
-            cursor.close()
-            connection.close()
-
-        except Error as e :
-            print(e)
-            cursor.close()
-            connection.close()
-            return {"error" : str(e)}, 500
-
-        return {"result" : "success"}, 200
 
     # 댓글 리스트 가져오기
     @jwt_required()
@@ -105,3 +74,35 @@ class CommentResource(Resource) :
             return {"error" : str(e)}, 500
 
         return {"result" : "success", "commentList" : result_list, "count" : len(result_list)}, 200
+    
+class CommentDeleteResource(Resource) :
+
+    # 댓글 삭제
+    @jwt_required()
+    def delete(self, commentId) :
+
+        user_id = get_jwt_identity()
+
+        try :
+            connection = get_connection()
+
+            query = '''
+                    delete from comment
+                    where id = %s and userId = %s;
+                    '''
+            record = (commentId, user_id)
+
+            cursor = connection.cursor()
+            cursor.execute(query, record)
+            connection.commit()
+
+            cursor.close()
+            connection.close()
+
+        except Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"error" : str(e)}, 500
+
+        return {"result" : "success"}, 200
