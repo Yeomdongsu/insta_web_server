@@ -90,6 +90,11 @@ class CommentResource(Resource) :
             cursor.execute(query, record)
             result_list = cursor.fetchall()
 
+            i = 0
+            for row in result_list :
+                result_list[i]["createdAt"] = row["createdAt"].isoformat()
+                i = i+1
+
             connection.close()
             cursor.close()
 
