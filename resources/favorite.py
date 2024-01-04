@@ -80,13 +80,15 @@ class FavoriteResource(Resource) :
             connection = get_connection()
             
             query = '''
-                    select f.userId, u.nickname  
-                    from favorite f
+                    select fa.userId, u.nickname, if(f.id is null, 0, 1) as isFollow
+                    from favorite fa
                     left join user u
-                    on f.userId = u.id
-                    where f.postingId = %s;
+                    on fa.userId = u.id
+                    left join follow f
+                    on fa.userId = f.followeeId and f.followerId = %s
+                    where fa.postingId = %s;
                     '''
-            record = (postingId, )
+            record = (user_id, postingId)
 
             cursor = connection.cursor(dictionary=True)
             cursor.execute(query, record)
