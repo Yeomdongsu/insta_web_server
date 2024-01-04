@@ -77,11 +77,12 @@ class CommentResource(Resource) :
             connection = get_connection()
 
             query = '''
-                    select c.id as commentId, u.id as userId, u.nickname
+                    select c.id as commentId, u.id as userId, u.nickname, c.postComment as comment, c.createdAt
                     from comment c
                     left join user u
                     on c.userId = u.id
-                    where c.postingId = %s;
+                    where c.postingId = %s
+                    order by c.createdAt asc;
                     '''
             record = (postId, )
             
