@@ -99,7 +99,7 @@ class UserLoginResource(Resource) :
         
         return  {"result" : "success", "access_token" : access_token}, 200
     
-    # 본인 외 모든 회원 나오게
+    # 본인 외 모든 팔로우 하지 않은 회원 나오게
     @jwt_required()
     def get(self) :
         
@@ -109,12 +109,14 @@ class UserLoginResource(Resource) :
             connection = get_connection()
 
             query = '''
-                    select id, nickname
-                    from user
-                    where id != %s
-                    order by id asc;
+                    select u.id, u.nickname
+                    from user u
+                    left join follow f
+                    on f.followeeId = u.id and f.followerId = %s 
+                    where u.id != %s and f.followerId is null
+                    order by u.id asc;
                     '''
-            record = (user_id, )
+            record = (user_id, user_id)
             
             cursor = connection.cursor(dictionary=True)
             cursor.execute(query, record)
