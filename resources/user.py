@@ -97,7 +97,7 @@ class UserLoginResource(Resource) :
         # JWT 인증 토큰 발급
         access_token = create_access_token(result_list[0]["id"])
         
-        return  {"result" : "success", "access_token" : access_token}, 200
+        return  {"result" : "success", "access_token" : access_token, "nickname" : result_list[0]["nickname"], "id" : result_list[0]["id"]}, 200
     
     # 본인 외 모든 팔로우 하지 않은 회원 나오게
     @jwt_required()
