@@ -5,7 +5,7 @@ from mysql.connector import Error
 from mysql_connection import get_connection
 
 class myPageResource(Resource) :
-    
+
     # 마이페이지
     @jwt_required()
     def get(self, userId) :
@@ -14,7 +14,7 @@ class myPageResource(Resource) :
             connection = get_connection()
 
             query = '''
-                    select u.id as userId, u.nickname as userNickname, u.email as userEmail, p.id as postingId, p.imageUrl, p.content, p.createdAt,
+                    select u.id as userId, u.nickname as userNickname, u.email as userEmail, ifnull(p.id, -1) as postingId, ifnull(p.imageUrl, null) as imageUrl, ifnull(p.content, null) as content, ifnull(p.createdAt, null) as createdAt,
                     count(p.id) over () as postingCnt, count(distinct f1.id) as followingCnt, count(distinct f2.id) as followersCnt
                     from user u
                     left join posting p
@@ -35,10 +35,14 @@ class myPageResource(Resource) :
 
             result_list = cursor.fetchall()
 
-            i = 0
-            for row in result_list :
-                result_list[i]["createdAt"] = row["createdAt"].isoformat()
-                i = i+1
+            if len(result_list) == 0 :
+                return {"error" : "존재하지 않는 유저입니다."}, 400
+            
+            if (result_list[0]["postingId"] > 0) :
+                i = 0
+                for row in result_list :
+                    result_list[i]["createdAt"] = row["createdAt"].isoformat()
+                    i = i+1
 
             connection.close()
             cursor.close()
