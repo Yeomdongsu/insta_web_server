@@ -5,6 +5,7 @@ from config import Config
 from resources.comment import CommentDeleteResource, CommentResource
 from resources.favorite import FavoriteResource
 from resources.follow import FollowResource
+from resources.myPage import myPageResource
 from resources.posting import PostingListResource, PostingResource
 from resources.user import UserLoginResource, UserLogoutResourcce, UserRegisterResource
 # 로그아웃 관련된 import문
@@ -38,6 +39,7 @@ api.add_resource(FollowResource, "/follow/<int:followee_id>") # 팔로우
 api.add_resource(FavoriteResource, "/favorite/<int:postingId>") # 좋아요
 api.add_resource(CommentResource, "/comment/<int:postId>") # 댓글 관련
 api.add_resource(CommentDeleteResource, "/comment/<int:commentId>")
+api.add_resource(myPageResource, "/myPage/<int:userId>") # 마이페이지
 
 if __name__ == "__main__" :
     app.run()
