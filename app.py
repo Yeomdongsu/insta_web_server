@@ -4,7 +4,7 @@ from flask_restful import Api
 from config import Config
 from resources.comment import CommentDeleteResource, CommentResource
 from resources.favorite import FavoriteResource
-from resources.follow import FollowResource
+from resources.follow import FollowResource, FollowerListResource, FollowingListResource
 from resources.myPage import myPageResource
 from resources.posting import PostingListResource, PostingResource
 from resources.user import UserLoginResource, UserLogoutResourcce, UserRegisterResource
@@ -36,6 +36,8 @@ api.add_resource(UserLogoutResourcce, "/user/logout") # 로그아웃
 api.add_resource(PostingListResource, "/posting") # 글쓰기 관련
 api.add_resource(PostingResource, "/posting/<int:postId>") # 글 상세정보
 api.add_resource(FollowResource, "/follow/<int:followee_id>") # 팔로우
+api.add_resource(FollowerListResource, "/follower") # 나를 팔로우 
+api.add_resource(FollowingListResource, "/followee") # 내가 팔로잉 
 api.add_resource(FavoriteResource, "/favorite/<int:postingId>") # 좋아요
 api.add_resource(CommentResource, "/comment/<int:postId>") # 댓글 관련
 api.add_resource(CommentDeleteResource, "/comment/<int:commentId>")
