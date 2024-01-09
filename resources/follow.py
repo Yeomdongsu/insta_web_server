@@ -116,15 +116,13 @@ class FollowingListResource(Resource) :
             connection = get_connection()
 
             query = '''
-                    select u.id, u.nickname, if(f2.id is null, 0, 1) as isFollow
+                    select u.id, u.nickname
                     from user u
                     left join follow f
                     on u.id = f.followeeId
-                    left join follow f2
-                    on u.id = f2.followerId and f2.followeeId = %s
                     where f.followerId = %s;
                     '''
-            record = (userId, userId)
+            record = (userId, )
             
             cursor = connection.cursor(dictionary=True)
             cursor.execute(query, record)
