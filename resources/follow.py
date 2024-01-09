@@ -71,7 +71,7 @@ class FollowResource(Resource) :
 class FollowerListResource(Resource) :
     # 나를 팔로우 하는 리스트
     @jwt_required()
-    def get(self) :
+    def get(self, userId) :
         
         user_id = get_jwt_identity()
 
@@ -87,7 +87,7 @@ class FollowerListResource(Resource) :
                     on f2.followeeId = u.id and f2.followerId = %s
                     where f.followeeId = %s;
                     '''
-            record = (user_id, user_id)
+            record = (userId, userId)
 
             cursor = connection.cursor(dictionary=True)
             cursor.execute(query, record)
@@ -108,7 +108,7 @@ class FollowerListResource(Resource) :
 class FollowingListResource(Resource) :
     # 내가 팔로잉 하는 리스트
     @jwt_required()
-    def get(self) :
+    def get(self, userId) :
 
         user_id = get_jwt_identity()
 
@@ -124,7 +124,7 @@ class FollowingListResource(Resource) :
                     on u.id = f2.followerId and f2.followeeId = %s
                     where f.followerId = %s;
                     '''
-            record = (user_id, user_id)
+            record = (userId, userId)
             
             cursor = connection.cursor(dictionary=True)
             cursor.execute(query, record)
