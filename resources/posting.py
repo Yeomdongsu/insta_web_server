@@ -261,8 +261,8 @@ class PostingResource(Resource) :
 
             tag_list = cursor.fetchall()
 
-            if len(tag_list) == 0 :
-                return {"error" : "해당 포스팅에 태그가 존재하지 않습니다."}, 400
+            # if len(tag_list) == 0 :
+            #     return {"error" : "해당 포스팅에 태그가 존재하지 않습니다."}, 400
 
             re_tag = []
             for tag in tag_list :
