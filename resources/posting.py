@@ -225,14 +225,16 @@ class PostingResource(Resource) :
             connection = get_connection()
 
             query = '''
-                    select p.id as postId, p.imageUrl, p.content, p.userId, u.nickname, p.createdAt, count(fa.id) as favoriteCnt, if(fa2.id is null, 0, 1) as isFavorite
+                    select p.id as postId, p.imageUrl, p.content, p.userId, u.nickname, p.createdAt, count(distinct fa.id) as favoriteCnt, if(fa2.id is null, 0, 1) as isFavorite, count(distinct c.id) as commentCnt 
                     from posting p
                     join user u
                     on p.userId = u.id
                     left join favorite fa
                     on p.id = fa.postingId
                     left join favorite fa2
-                    on p.id = fa2.postingId and fa2.userId = %s  
+                    on p.id = fa2.postingId and fa2.userId = %s 
+                    left join comment c
+                    on p.id = c.postingId
                     where p.id = %s;
                     '''
             record = (user_id, postId)
