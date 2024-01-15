@@ -54,3 +54,35 @@ class myPageResource(Resource) :
             return {"error" : str(e)}, 500
 
         return {"result" : "success", "items" : result_list, "count" : len(result_list)}, 200
+    
+    # 내 정보 수정(닉네임만)
+    @jwt_required()
+    def post(self, userId) : 
+
+        updateNickname = request.get_json()
+        
+        try :
+            connection = get_connection()
+
+            query = '''
+                    update user
+                    set nickname = %s
+                    where id = %s;
+                    '''
+            
+            record = (updateNickname["nickname"], userId)
+            cursor = connection.cursor()
+            cursor.execute(query, record)
+
+            connection.commit()
+
+            cursor.close()
+            connection.close()
+
+        except Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"error" : str(e)}, 500
+        
+        return {"result" : "success"}, 200
