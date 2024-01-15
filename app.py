@@ -34,7 +34,7 @@ api.add_resource(UserRegisterResource, "/user/register") # 회원가입
 api.add_resource(UserLoginResource, "/user/login") # 로그인
 api.add_resource(UserLogoutResourcce, "/user/logout") # 로그아웃
 api.add_resource(PostingListResource, "/posting") # 글쓰기 관련
-api.add_resource(PostingResource, "/posting/<int:postId>") # 글 상세정보
+api.add_resource(PostingResource, "/posting/<int:postId>") # 글 상세정보, 삭제
 api.add_resource(FollowResource, "/follow/<int:followee_id>") # 팔로우
 api.add_resource(FollowerListResource, "/follower/<int:userId>") # 팔로워 리스트 
 api.add_resource(FollowingListResource, "/followee/<int:userId>") # 팔로잉 리스트

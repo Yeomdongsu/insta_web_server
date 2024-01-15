@@ -280,3 +280,59 @@ class PostingResource(Resource) :
             return {"error" : str(e)}, 500
 
         return {"result" : "success", "post" : result_list, "tag" : re_tag}, 200
+    
+    # 글 삭제
+    @jwt_required()
+    def delete(self, postId) :
+        user_id = get_jwt_identity()
+
+        try:
+            connection = get_connection()
+
+            # 1. 해당 포스팅과 연관된 태그 정보 삭제
+            delete_tag_query = '''
+                               DELETE FROM tag
+                               WHERE postingId = %s;
+                               '''
+            tag_record = (postId, )
+            cursor = connection.cursor()
+            cursor.execute(delete_tag_query, tag_record)
+
+            # 2. 해당 포스팅 정보 조회 (이미지 URL 획득을 위해)
+            get_posting_query = '''
+                                SELECT imageUrl
+                                FROM posting
+                                WHERE id = %s AND userId = %s;
+                                '''
+            posting_record = (postId, user_id)
+            cursor.execute(get_posting_query, posting_record)
+            posting_data = cursor.fetchone()
+
+            if posting_data:
+                # 3. S3 버킷에서 이미지 파일 삭제
+                image_url = posting_data[0]
+                file_name = image_url.split("/")[-1]
+
+                s3 = boto3.client("s3", aws_access_key_id=Config.AWS_ACCESS_KEY_ID, aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY)
+                s3.delete_object(Bucket=Config.S3_BUCKET, Key=file_name)
+
+            # 4. 해당 포스팅 삭제
+            delete_posting_query = '''
+                                   DELETE FROM posting
+                                   WHERE id = %s AND userId = %s;
+                                   '''
+            cursor.execute(delete_posting_query, posting_record)
+
+            # 5. 커밋은 모든 처리를 완료한 후에 수행
+            connection.commit()
+
+            cursor.close()
+            connection.close()
+
+        except Exception as e:
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"error": str(e)}, 500
+
+        return {"result": "success"}, 200
