@@ -54,6 +54,58 @@ class UserRegisterResource(Resource) :
 
         return {"result" : "success", "access_token" : access_token}, 200 
 
+# 카카오 정보로 회원가입
+class KakaoUserRegisterResource(Resource) :
+    
+    def post(self) :
+
+        data = request.get_json()
+
+        try :
+            connection = get_connection()
+
+            query = '''
+                    select * 
+                    from user
+                    where nickname = %s;
+                    '''
+            record = (data["nickname"], )
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute(query, record)
+
+            result_list = cursor.fetchall()
+
+            if len(result_list) == 1 :
+                access_token = create_access_token(result_list[0]["id"])
+                return {"result" : "success", "access_token" : access_token, "nickname" : result_list[0]["nickname"], "id" : result_list[0]["id"]}, 200
+
+            query = '''
+                    insert into user
+                    (nickname)
+                    value
+                    (%s);
+                    '''
+            record = (data["nickname"], )
+
+            cursor = connection.cursor()
+            cursor.execute(query, record)
+            connection.commit()
+
+            user_id = cursor.lastrowid
+
+            cursor.close()
+            connection.close()
+
+        except Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"result" : "fail", "error" : str(e)}, 500
+
+        access_token = create_access_token(user_id)
+
+        return {"result" : "success", "access_token" : access_token}, 200
+
 # 로그인
 class UserLoginResource(Resource) :
     

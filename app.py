@@ -7,7 +7,7 @@ from resources.favorite import FavoriteResource
 from resources.follow import FollowResource, FollowerListResource, FollowingListResource
 from resources.myPage import myPageResource
 from resources.posting import PostingListResource, PostingResource
-from resources.user import UserLoginResource, UserLogoutResourcce, UserRegisterResource
+from resources.user import KakaoUserRegisterResource, UserLoginResource, UserLogoutResourcce, UserRegisterResource
 # 로그아웃 관련된 import문
 from resources.user import jwt_blocklist
 
@@ -31,6 +31,7 @@ api = Api(app)
 
 # 리소스(API코드)와 경로를 연결한다.
 api.add_resource(UserRegisterResource, "/user/register") # 회원가입
+api.add_resource(KakaoUserRegisterResource, "/user/kakao/register") # 카카오로 회원가입
 api.add_resource(UserLoginResource, "/user/login") # 로그인
 api.add_resource(UserLogoutResourcce, "/user/logout") # 로그아웃
 api.add_resource(PostingListResource, "/posting") # 글쓰기 관련
