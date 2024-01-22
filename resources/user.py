@@ -104,7 +104,7 @@ class KakaoUserRegisterResource(Resource) :
 
         access_token = create_access_token(user_id)
 
-        return {"result" : "success", "access_token" : access_token}, 200
+        return {"result" : "success", "access_token" : access_token, "id" : user_id}, 200
 
 # 로그인
 class UserLoginResource(Resource) :
